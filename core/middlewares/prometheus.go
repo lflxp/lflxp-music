@@ -2,7 +2,6 @@
 package middlewares
 
 import (
-	"flag"
 	"fmt"
 	"math"
 	"math/rand"
@@ -12,14 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-)
-
-var (
-	addr              = flag.String("listen-address", ":8080", "The address to listen on for HTTP requests.")
-	uniformDomain     = flag.Float64("uniform.domain", 0.0002, "The domain for the uniform distribution.")
-	normDomain        = flag.Float64("normal.domain", 0.0002, "The domain for the normal distribution.")
-	normMean          = flag.Float64("normal.mean", 0.00001, "The mean for the normal distribution.")
-	oscillationPeriod = flag.Duration("oscillation-period", 10*time.Minute, "The duration of the rate oscillation period.")
 )
 
 var (
@@ -41,7 +32,7 @@ var (
 	rpcDurationsHistogram = prometheus.NewHistogram(prometheus.HistogramOpts{
 		Name:    "rpc_durations_histogram_seconds",
 		Help:    "RPC latency distributions.",
-		Buckets: prometheus.LinearBuckets(*normMean-5**normDomain, .5**normDomain, 20),
+		Buckets: prometheus.LinearBuckets(0.00001-5*0.0002, .5*0.0002, 20),
 	})
 )
 
@@ -79,13 +70,13 @@ func RegisterPrometheusMiddleware(router *gin.Engine, isauth bool) {
 	start := time.Now()
 
 	oscillationFactor := func() float64 {
-		return 2 + math.Sin(math.Sin(2*math.Pi*float64(time.Since(start))/float64(*oscillationPeriod)))
+		return 2 + math.Sin(math.Sin(2*math.Pi*float64(time.Since(start))/float64(10*time.Minute)))
 	}
 
 	// Periodically record some sample latencies for the three services.
 	go func() {
 		for {
-			v := rand.Float64() * *uniformDomain
+			v := rand.Float64() * 0.0002
 			rpcDurations.WithLabelValues("uniform").Observe(v)
 			time.Sleep(time.Duration(100*oscillationFactor()) * time.Millisecond)
 		}
@@ -93,7 +84,7 @@ func RegisterPrometheusMiddleware(router *gin.Engine, isauth bool) {
 
 	go func() {
 		for {
-			v := (rand.NormFloat64() * *normDomain) + *normMean
+			v := (rand.NormFloat64() * 0.0002) + 0.00001
 			rpcDurations.WithLabelValues("normal").Observe(v)
 			// Demonstrate exemplar support with a dummy ID. This
 			// would be something like a trace ID in a real
