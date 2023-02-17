@@ -13,8 +13,8 @@
       <template v-else>
         <dd>mmPlayer在线音乐播放器</dd>
         <dd>
-          <a class="hover" target="_blank" href="https://github.com/maomao1996">
-            <mm-icon type="github" :size="14" />&nbsp;茂茂
+          <a class="hover" target="_blank" href="https://github.com/lflxp">
+            <mm-icon type="github" :size="14" />&nbsp;茂茂 & lflxp
           </a>
         </dd>
       </template>
