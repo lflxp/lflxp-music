@@ -10,17 +10,16 @@ import (
 )
 
 var (
-	AUTH_LOGOUT_POST      string = "/admin/auth/logout"
-	AUTH_LOGIN_LOCAL_POST string = "/admin/auth/login"
+	AUTH_LOGOUT_POST      string = "/auth/logout"
+	AUTH_LOGIN_LOCAL_POST string = "/auth/login"
 )
 
 func RegisterAuth(router *gin.Engine) {
 	keycloakGroup := router.Group("")
 	{
-		keycloakGroup.GET("/api/tablelist", tablelist)
-		keycloakGroup.POST("/api/login", loginlocal)
+		keycloakGroup.GET("/auth/tablelist", tablelist)
 		keycloakGroup.POST(AUTH_LOGIN_LOCAL_POST, loginlocal)
-		keycloakGroup.POST(AUTH_LOGOUT_POST, logout)
+		keycloakGroup.GET(AUTH_LOGOUT_POST, logout)
 	}
 }
 

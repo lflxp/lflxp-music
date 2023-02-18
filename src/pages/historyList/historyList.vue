@@ -2,7 +2,7 @@
   <!--我听过的（播放历史）-->
   <div class="historyList">
     <music-list
-      :list="historyList"
+      :list="list"
       list-type="duration"
       @select="selectItem"
       @del="deleteItem"
@@ -24,6 +24,7 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import MusicList from 'components/music-list/music-list'
 import MmDialog from 'base/mm-dialog/mm-dialog'
+import { getHistoryList, deltHistoryList } from 'api'
 
 export default {
   name: 'HistoryList',
@@ -31,10 +32,23 @@ export default {
     MusicList,
     MmDialog
   },
+  data() {
+    return {
+      list: []
+    }
+  },
   computed: {
     ...mapGetters(['historyList', 'playing', 'currentMusic'])
   },
+  created() {
+    this.fetchData()
+  },
   methods: {
+    fetchData() {
+      getHistoryList().then((res) => {
+        this.list = res.data
+      })
+    },
     // 清空列表事件
     clearList() {
       this.clearHistory()
@@ -49,6 +63,11 @@ export default {
     },
     // 删除事件
     deleteItem(index) {
+      console.log('index', index)
+      deltHistoryList(this.historyList[index]['name']).then((res) => {
+        console.log(res)
+        this.fetchData()
+      })
       let list = [...this.historyList]
       list.splice(index, 1)
       this.removeHistory(list)

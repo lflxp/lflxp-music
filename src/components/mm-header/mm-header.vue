@@ -108,7 +108,8 @@ export default {
     openDialog(key) {
       switch (key) {
         case 0:
-          this.$refs.loginDialog.show()
+          // this.$refs.loginDialog.show()
+          window.location.href = '/admin/index'
           break
         case 1:
           this.$refs.loginDialog.hide()

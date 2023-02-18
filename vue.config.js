@@ -15,6 +15,43 @@ process.env.VUE_APP_UPDATE_TIME = dayjs().locale('zh-cn').format('YYYY-MM-DD')
 
 module.exports = defineConfig({
   publicPath: '/music/',
+  devServer: {
+    proxy: {
+      '/login': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/api': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/admin': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/music': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/playlist': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/lyric': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/toplist': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/search': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/song': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/comment': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/personalized': {
+        target: process.env.BACKGROUND_APPLICATION_URL
+      }
+    }
+  },
   chainWebpack(config) {
     config.resolve.alias
       .set('api', resolve('src/api'))

@@ -24,10 +24,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	logoutUrl = "/v3/tokens"
-)
-
 var (
 	identityKey    string
 	jwtMiddleware  *jwt.GinJWTMiddleware
@@ -49,9 +45,13 @@ func GetMiddleware() *jwt.GinJWTMiddleware {
 // 验证用户密码
 func VerifyAuth(username, password string) (bool, error) {
 	// 优先查询数据库
-	var user = model.User{Username: username}
+	var user = new(model.User)
 	// 忽略[]claims与string 解析
-	has, _ := sqlite.NewOrm().Get(&user)
+	has, err := sqlite.NewOrm().Where("username=?", username).Get(user)
+	if err != nil {
+		log.Error(err)
+		return false, err
+	}
 
 	if has {
 		log.Debugf("Found User %s Login", username)
@@ -64,8 +64,7 @@ func VerifyAuth(username, password string) (bool, error) {
 		// TODO: verify username pwd
 		if account := viper.GetStringMap("account"); account != nil {
 			if user, ok := account[username]; !ok {
-				// return false, errors.New("查无此人")
-				return true, nil
+				return false, errors.New("查无此人")
 			} else {
 				if pwd, ok := user.(map[string]interface{})["password"]; ok {
 					// TODO: password md5 jiami
@@ -77,13 +76,14 @@ func VerifyAuth(username, password string) (bool, error) {
 				}
 			}
 		} else {
+			return false, errors.New("用户名或密码错误")
 			// 如果又没数据库又没yaml配置文件
 			// 默认密码： admin
-			if user.Password == "admin" {
-				return true, nil
-			} else {
-				return false, errors.New("用户名或密码错误")
-			}
+			// if user.Password == "admin" {
+			// 	return true, nil
+			// } else {
+			// 	return false, errors.New("用户名或密码错误")
+			// }
 		}
 	}
 
@@ -301,7 +301,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 		Authorizator: jwta,
 		//handles unauthorized logic
 		Unauthorized: func(c *gin.Context, code int, message string) {
-			c.Redirect(http.StatusFound, "/music")
+			c.Redirect(http.StatusFound, "/login?url="+c.Request.RequestURI)
 		},
 		// TokenLookup is a string in the form of "<source>:<name>" that is used
 		// to extract token from the request.
@@ -328,12 +328,17 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 		CookieSameSite: http.SameSiteDefaultMode,
 		LoginResponse: func(c *gin.Context, code int, message string, time time.Time) {
 			c.JSONP(code, gin.H{
-				"token": message,
-				"time":  time.String(),
-				"code":  code,
-				"name":  c.Request.Header.Get("user"),
-				"uuid":  newKey(),
+				"token":  message,
+				"time":   time.String(),
+				"code":   code,
+				"name":   c.Request.Header.Get("user"),
+				"uuid":   newKey(),
+				"expire": time,
 			})
+		},
+		LogoutResponse: func(c *gin.Context, code int) {
+			c.SetCookie("token", "", -1, "/", "localhost", false, true)
+			c.Redirect(302, "/login")
 		},
 	})
 	if err != nil {
