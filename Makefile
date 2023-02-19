@@ -11,3 +11,6 @@ fbuild:
 
 init:
 	npm install
+
+arm:
+	GOOS=linux GOARCH=arm64 go build

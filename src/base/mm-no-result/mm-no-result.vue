@@ -1,7 +1,21 @@
 <template>
   <!--暂无数据提示-->
   <div class="mm-no-result">
-    <p class="mm-no-result-text">{{ title }}</p>
+    <p class="mm-no-result-text" @click="dialogVisible = true">{{ title }}</p>
+    <el-dialog title="上传文件" :visible.sync="dialogVisible" width="35%">
+      <el-upload
+        class="upload-demo"
+        drag
+        action="/api/music/local/upload"
+        multiple
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div slot="tip" class="el-upload__tip">
+          只能上传jpg/png文件，且不超过500kb
+        </div>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
@@ -13,6 +27,11 @@ export default {
     title: {
       type: String,
       default: ''
+    }
+  },
+  data() {
+    return {
+      dialogVisible: false
     }
   }
 }

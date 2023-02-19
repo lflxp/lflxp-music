@@ -116,7 +116,7 @@ export default {
         const image = await this._getMusicDetail(music.id)
         music.image = toHttps(image)
         this.selectAddPlay(music)
-        addtHistoryList(item)
+        addtHistoryList(music)
       } catch (error) {
         this.$mmToast('哎呀，出错啦~')
       }
