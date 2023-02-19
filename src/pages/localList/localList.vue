@@ -71,7 +71,8 @@ export default {
       this.fetchData()
     },
     ...mapMutations({
-      setPlaying: 'SET_PLAYING'
+      setPlaying: 'SET_PLAYING',
+      setCurrentIndex: 'SET_CURRENTINDEX'
     }),
     ...mapActions(['selectPlay', 'clearHistory', 'removeHistory'])
   }

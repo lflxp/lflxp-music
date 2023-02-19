@@ -51,10 +51,8 @@ export default {
       if (item.id !== this.currentMusic.id) {
         this.setCurrentIndex(index)
         this.setPlaying(true)
-        console.log('item', item)
-        addtHistoryList(item).then((res) => {
-          console.log(res)
-        })
+        // console.log('item', item)
+        addtHistoryList(item)
       }
     },
     // 删除事件

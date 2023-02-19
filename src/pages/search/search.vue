@@ -38,6 +38,7 @@ import MmLoading from 'base/mm-loading/mm-loading'
 import MusicList from 'components/music-list/music-list'
 import { loadMixin } from '@/utils/mixin'
 import { toHttps } from '@/utils/util'
+import { addtHistoryList } from 'api'
 
 export default {
   name: 'Search',
@@ -115,6 +116,7 @@ export default {
         const image = await this._getMusicDetail(music.id)
         music.image = toHttps(image)
         this.selectAddPlay(music)
+        addtHistoryList(item)
       } catch (error) {
         this.$mmToast('哎呀，出错啦~')
       }

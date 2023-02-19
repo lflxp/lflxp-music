@@ -46,13 +46,13 @@ export default {
   methods: {
     fetchData() {
       getHistoryList().then((res) => {
-        console.log('res', res, this.historyList)
+        // console.log('res', res, this.historyList)
         this.list = res.data
       })
     },
     // 清空列表事件
     clearList() {
-      this.clearHistory()
+      // this.clearHistory()
       this.$mmToast('列表清空成功')
     },
     // 播放事件
@@ -73,7 +73,8 @@ export default {
       this.$mmToast('删除成功')
     },
     ...mapMutations({
-      setPlaying: 'SET_PLAYING'
+      setPlaying: 'SET_PLAYING',
+      setCurrentIndex: 'SET_CURRENTINDEX'
     }),
     ...mapActions(['selectPlay', 'clearHistory', 'removeHistory'])
   }
