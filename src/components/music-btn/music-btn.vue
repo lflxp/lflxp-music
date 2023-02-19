@@ -7,6 +7,7 @@
     <router-link to="/music/userlist" tag="span">我的歌单</router-link>
     <span class="show-960" @click="$emit('onClickLyric')">歌词</span>
     <router-link to="/music/historylist" tag="span">我听过的</router-link>
+    <router-link to="/music/locallist" tag="span">本地歌曲</router-link>
   </div>
 </template>
 

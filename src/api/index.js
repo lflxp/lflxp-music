@@ -136,3 +136,8 @@ export function addtHistoryList(data) {
 export function deltHistoryList(id) {
   return axios.delete('/api/music/history/delete?id=' + id)
 }
+
+// 本地音乐
+export function localList() {
+  return axios.get('/api/music/local/list')
+}

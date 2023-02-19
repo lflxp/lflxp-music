@@ -11,6 +11,8 @@ import mmToast from 'base/mm-toast'
 import Icon from 'base/mm-icon/mm-icon'
 import VueLazyload from 'vue-lazyload'
 import { VERSION } from './config'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 import '@/styles/index.less'
 
@@ -19,6 +21,7 @@ fastclick.attach(document.body)
 
 // 弹出层
 Vue.use(mmToast)
+Vue.use(ElementUI)
 
 // icon 组件
 Vue.component(Icon.name, Icon)

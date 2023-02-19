@@ -49,6 +49,9 @@ module.exports = defineConfig({
       },
       '/personalized': {
         target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/static': {
+        target: process.env.BACKGROUND_APPLICATION_URL
       }
     }
   },

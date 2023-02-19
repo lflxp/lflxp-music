@@ -47,6 +47,13 @@ const routes = [
         }
       },
       {
+        path: '/music/locallist', // 我听过的列表
+        component: () => import('pages/localList/localList'),
+        meta: {
+          title: '本地歌曲'
+        }
+      },
+      {
         path: '/music/search', // 搜索
         component: () => import('pages/search/search'),
         meta: {

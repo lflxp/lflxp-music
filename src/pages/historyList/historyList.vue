@@ -63,9 +63,7 @@ export default {
     },
     // 删除事件
     deleteItem(index) {
-      console.log('index', index)
       deltHistoryList(this.historyList[index]['name']).then((res) => {
-        console.log(res)
         this.fetchData()
       })
       let list = [...this.historyList]

@@ -3,12 +3,14 @@ package music
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/go-eden/slf4go"
 	"github.com/lflxp/lflxp-music/core/model/music"
 	"github.com/lflxp/tools/httpclient"
 	"github.com/lflxp/tools/orm/sqlite"
+	"k8s.io/client-go/util/homedir"
 )
 
 func init() {
@@ -16,17 +18,24 @@ func init() {
 }
 
 const (
-	REPO_LIST   = "/music/history/list"
-	REPO_ADD    = "/music/history/add"
-	REPO_DELETE = "/music/history/delete"
+	REPO_LIST       = "/music/history/list"
+	REPO_ADD        = "/music/history/add"
+	REPO_DELETE     = "/music/history/delete"
+	REPO_UPLOAD     = "/music/local/upload"
+	REPO_LOCAL_LIST = "/music/local/list"
+	REPO_STATIC     = "/static"
 )
 
 func RegisterMusic(router *gin.Engine) {
+	// FSStatic
+	router.StaticFS(REPO_STATIC, http.Dir(filepath.Join(homedir.HomeDir(), "/.music")))
 	shopGroup := router.Group("/api")
 	{
 		shopGroup.GET(REPO_LIST, repo_list)
 		shopGroup.POST(REPO_ADD, repo_add)
 		shopGroup.DELETE(REPO_DELETE, repo_delete)
+		shopGroup.POST(REPO_UPLOAD, Upload)
+		shopGroup.GET(REPO_LOCAL_LIST, music_local_list)
 	}
 }
 
