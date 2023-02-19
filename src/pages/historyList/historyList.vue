@@ -46,6 +46,7 @@ export default {
   methods: {
     fetchData() {
       getHistoryList().then((res) => {
+        console.log('res', res, this.historyList)
         this.list = res.data
       })
     },
@@ -57,7 +58,7 @@ export default {
     // 播放事件
     selectItem(item, index) {
       this.selectPlay({
-        list: this.historyList,
+        list: this.list,
         index
       })
     },
@@ -66,9 +67,9 @@ export default {
       deltHistoryList(this.historyList[index]['name']).then((res) => {
         this.fetchData()
       })
-      let list = [...this.historyList]
-      list.splice(index, 1)
-      this.removeHistory(list)
+      // let list = [...this.historyList]
+      // list.splice(index, 1)
+      // this.removeHistory(list)
       this.$mmToast('删除成功')
     },
     ...mapMutations({

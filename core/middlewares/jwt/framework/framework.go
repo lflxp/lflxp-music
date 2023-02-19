@@ -325,7 +325,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 		CookieHTTPOnly: false, // js can't modify
 		// CookieDomain: "localhost:8080",
 		CookieName:     "token",
-		CookieSameSite: http.SameSiteDefaultMode,
+		CookieSameSite: http.SameSiteLaxMode,
 		LoginResponse: func(c *gin.Context, code int, message string, time time.Time) {
 			c.JSONP(code, gin.H{
 				"token":  message,

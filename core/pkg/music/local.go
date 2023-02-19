@@ -7,7 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/bogem/id3v2/v2"
 	"github.com/gin-gonic/gin"
+	log "github.com/go-eden/slf4go"
 	"github.com/lflxp/lflxp-music/core/model/music"
 	"github.com/lflxp/lflxp-music/core/utils"
 	"github.com/lflxp/tools/httpclient"
@@ -25,7 +27,7 @@ func init() {
 func music_local_list(c *gin.Context) {
 	username := c.Request.Header.Get("username")
 	home := homedir.HomeDir()
-	types := strings.Split(".avi,.wma,.rmvb,.rm,.mp3,.mp4,.mov,.3gp,.mpeg,.mpg,.mpe,.m4v,.mkv,.flv,.vob,.wmv,.asf,.asx", ",")
+	types := strings.Split(".avi,.wma,.rmvb,.rm,.wav,.mp3,.mp4,.mov,.3gp,.mpeg,.mpg,.mpe,.m4v,.mkv,.flv,.vob,.wmv,.asf,.asx", ",")
 
 	if _, err := utils.IsExistAndCreateDir(filepath.Join(home, fmt.Sprintf(".music/%s", username))); err != nil {
 		httpclient.SendErrorMessage(c, 500, "文件夹不存在或者创建文件夹失败", err.Error())
@@ -42,13 +44,23 @@ func music_local_list(c *gin.Context) {
 	if len(filelist) > 0 {
 		list = []music.Musichistory{}
 		for index, x := range filelist {
+			tag, err := id3v2.Open(fmt.Sprintf("%s/%s", filepath.Join(home, fmt.Sprintf(".music/%s", username)), x), id3v2.Options{Parse: true})
+			if err != nil {
+				log.Fatal("Error while opening mp3 file: ", err)
+			}
+			defer tag.Close()
+
+			if tag.Title() == "" {
+				tag.SetTitle(x)
+			}
+
 			list = append(list, music.Musichistory{
 				Id:       int64(index),
-				Album:    "本地文件夹",
-				Duration: 200.01,
+				Album:    tag.Album(),
+				Duration: float64(tag.Size()) * 3.5,
 				Image:    "https://p3.music.126.net/YglUhn-RRq6KM7Dfm6VUZw==/109951168255550269.jpg",
-				Name:     x,
-				Singer:   "不知道",
+				Name:     tag.Title(),
+				Singer:   tag.Artist(),
 				Url:      fmt.Sprintf("/static/%s/%s", username, x),
 				// Url: "https://music.163.com/song/media/outer/url?id=1997438791.mp3",
 			})

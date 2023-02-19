@@ -6,7 +6,6 @@ import {
   setUserId
 } from '@/utils/storage'
 import * as types from './mutation-types'
-import { addtHistoryList } from 'api'
 
 function findIndex(list, music) {
   return list.findIndex((item) => {
@@ -73,7 +72,6 @@ export const removerPlayListItem = function (
 // 设置播放历史
 export const setHistory = function ({ commit }, music) {
   commit(types.SET_HISTORYLIST, setHistoryList(music))
-  addtHistoryList(music)
 }
 // 删除播放历史
 export const removeHistory = function ({ commit }, music) {

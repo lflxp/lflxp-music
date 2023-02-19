@@ -11,7 +11,7 @@
         <span @click="dialogVisible = true">上传文件</span>
       </div>
     </music-list>
-    <el-dialog title="上传文件" :visible.sync="dialogVisible" width="60%">
+    <el-dialog title="上传文件" :visible.sync="dialogVisible" width="35%">
       <el-upload
         class="upload-demo"
         drag
@@ -59,7 +59,7 @@ export default {
     // 播放事件
     selectItem(item, index) {
       this.selectPlay({
-        list: this.historyList,
+        list: this.list,
         index
       })
     },

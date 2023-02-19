@@ -24,6 +24,7 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import MusicList from 'components/music-list/music-list'
 import MmDialog from 'base/mm-dialog/mm-dialog'
+import { addtHistoryList } from 'api'
 
 export default {
   name: 'PlayList',
@@ -50,6 +51,10 @@ export default {
       if (item.id !== this.currentMusic.id) {
         this.setCurrentIndex(index)
         this.setPlaying(true)
+        console.log('item', item)
+        addtHistoryList(item).then((res) => {
+          console.log(res)
+        })
       }
     },
     // 删除事件
