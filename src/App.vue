@@ -22,6 +22,7 @@ import { MMPLAYER_CONFIG, VERSION } from '@/config'
 import MmHeader from 'components/mm-header/mm-header'
 import MmDialog from 'base/mm-dialog/mm-dialog'
 import { getVersion, setVersion } from '@/utils/storage'
+const { invoke } = window.__TAURI__.tauri
 
 const VERSION_INFO = `<div class="mm-dialog-text text-left">
 版本号：${VERSION}（${process.env.VUE_APP_UPDATE_TIME}）<br/>
@@ -39,6 +40,13 @@ export default {
   created() {
     // 设置版本更新信息
     this.versionInfo = VERSION_INFO
+
+    // now we can call our Command!
+    // 在应用窗口中右键，打开开发者工具
+    // 你会看到控制台上输出了 "Hello, World!"！
+    invoke('greet', { name: 'World' }).then((response) =>
+      this.$mmToast(response)
+    )
 
     // 获取正在播放列表
     getPlaylistDetail(MMPLAYER_CONFIG.PLAYLIST_ID).then((playlist) => {

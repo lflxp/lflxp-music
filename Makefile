@@ -14,3 +14,6 @@ init:
 
 arm:
 	GOOS=linux GOARCH=arm64 go build
+
+tauri:
+	cargo tauri dev

@@ -69,8 +69,8 @@ func (m *Musichistory) Download() (error, bool) {
 		tag.SetTitle(m.Name)
 		tag.SetAlbum(m.Album)
 		tag.SetArtist(m.Singer)
-		// tag.SetGenre(m.Image)
-		// tag.SetYear(fmt.Sprintf("%.2f", m.Duration))
+		tag.SetGenre(m.Image)
+		tag.SetYear(fmt.Sprintf("%.2f", m.Duration))
 	}
 
 	return nil, true
