@@ -87,7 +87,7 @@ func music_local_list(c *gin.Context) {
 				Album:    tag.Album(),
 				Duration: second,
 				Image:    "https://p3.music.126.net/YglUhn-RRq6KM7Dfm6VUZw==/109951168255550269.jpg",
-				Name:     tag.Title(),
+				Name:     strings.Replace(tag.Title(), ".mp3", "", -1),
 				Singer:   tag.Artist(),
 				Url:      fmt.Sprintf("/static/%s/%s", username, x),
 				// Url: "https://music.163.com/song/media/outer/url?id=1997438791.mp3",
