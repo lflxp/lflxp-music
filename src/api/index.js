@@ -141,3 +141,12 @@ export function deltHistoryList(id) {
 export function localList() {
   return axios.get('/api/music/local/list')
 }
+
+// 远程下载
+export function download(data) {
+  return axios.post('/api/music/local/download', {
+    param: {
+      data: data
+    }
+  })
+}

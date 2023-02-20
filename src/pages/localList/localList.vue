@@ -3,7 +3,7 @@
   <div class="historyList">
     <music-list
       :list="list"
-      list-type="duration"
+      list-type="album"
       @select="selectItem"
       @del="deleteItem"
     >

@@ -26,6 +26,12 @@
                 :size="40"
                 @click.stop="selectItem(item, index)"
               />
+              <mm-icon
+                class="hover"
+                type="ic_get_app"
+                :size="40"
+                @click.stop="comeonbaby(item)"
+              />
             </div>
           </div>
           <span class="list-artist">{{ item.singer }}</span>
@@ -52,6 +58,7 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { format } from '@/utils/util'
 import MmNoResult from 'base/mm-no-result/mm-no-result'
+import { download } from 'api'
 
 const LIST_TYPE_ALBUM = 'album'
 const LIST_TYPE_DURATION = 'duration'
@@ -132,6 +139,15 @@ export default {
     // 回到顶部
     scrollTo() {
       this.$refs.listContent.scrollTop = 0
+    },
+    comeonbaby(item) {
+      download(item).then((res) => {
+        if (res.data === undefined || res.data === null) {
+          this.$mmToast(res.errorCode)
+        } else {
+          this.$mmToast(res.data)
+        }
+      })
     },
     // 播放暂停事件
     selectItem(item, index, e) {
