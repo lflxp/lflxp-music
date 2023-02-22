@@ -38,7 +38,7 @@ import MmLoading from 'base/mm-loading/mm-loading'
 import MusicList from 'components/music-list/music-list'
 import { loadMixin } from '@/utils/mixin'
 import { toHttps } from '@/utils/util'
-import { addtHistoryList } from 'api'
+import { addtHistoryList } from 'api/local'
 
 export default {
   name: 'Search',

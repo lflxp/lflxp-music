@@ -1,3 +1,8 @@
+app:
+	npm run build
+	cd src-tauri && cargo build
+	./src-tauri/target/debug/app
+
 fast: fbuild
 	go run main.go
 

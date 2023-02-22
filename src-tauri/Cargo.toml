@@ -21,6 +21,10 @@ tauri = { version = "1.2.4", features = [] }
 axum = { version = "0.6.7" }
 rand = "0.3.17"
 tokio = { version = "1.0", features = ["full"] }
+tower-http = { version = "0.3.0", features = ["cors"] }
+hyper = { version = "0.14", features = ["full"] }
+hyper-rustls = "0.23"
+tokio-rustls = "0.23.4"
 
 [features]
 # by default Tauri runs in production mode

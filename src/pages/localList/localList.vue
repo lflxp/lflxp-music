@@ -31,7 +31,7 @@
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import MusicList from 'components/music-list/music-list'
-import { localList } from 'api'
+import { localList } from 'api/local'
 
 export default {
   name: 'LocalList',
@@ -53,6 +53,7 @@ export default {
   methods: {
     fetchData() {
       localList().then((res) => {
+        alert(res)
         this.list = res.data
       })
     },

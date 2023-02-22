@@ -1,27 +1,45 @@
 use axum::{
     routing::{get, post},
-    http::StatusCode,
-    response::IntoResponse,
+    http::{
+        HeaderValue, Method, StatusCode, header::{AUTHORIZATION, ACCESS_CONTROL_ALLOW_ORIGIN, ACCESS_CONTROL_ALLOW_HEADERS},
+        uri::Uri, Request, Response,
+    },
+    extract::State,
+    // response::IntoResponse,
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use rand::Rng;
+use tower_http::cors::CorsLayer;
+use hyper::{client::HttpConnector, Body};
+
+type Client = hyper::client::Client<HttpConnector, Body>;
 
 pub async fn start() {
-    tokio::spawn(async {
         // initialize tracing
         // tracing_subscriber::fmt::init();
+        let client = Client::new();
 
         // build our application with a route
         let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(root))
         .route("/foo", get(get_foo).post(post_foo))
-        .route("/playlist/detail", get(get_foo))
+        .route("/playlist/detail", get(proxy_handler))
         .route("/foo/bar", get(foo_bar))
+        .route("/api/music/history/list", get(foo_bar))
+        .route("/api/music/local/list", get(foo_bar))
+        .route("/api/music/local/list", get(foo_bar))
         // `POST /users` goes to `create_user`
-        .route("/users", post(create_user));
+        .route("/users", post(create_user))
+        .with_state(client)
+        .layer(
+            CorsLayer::new()
+                .allow_origin("*".parse::<HeaderValue>().unwrap())
+                .allow_headers([AUTHORIZATION, ACCESS_CONTROL_ALLOW_ORIGIN, ACCESS_CONTROL_ALLOW_HEADERS])
+                .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::PUT, Method::PATCH])
+        );
 
         // run our app with hyper
         // `axum::Server` is a re-export of `hyper::Server`
@@ -32,21 +50,40 @@ pub async fn start() {
             .serve(app.into_make_service())
             .await
             .unwrap();
-    });
+}
+
+async fn proxy_handler(State(client): State<Client>, mut req: Request<Body>) -> Response<Body> {
+    let path = req.uri().path();
+    let path_query = req
+        .uri()
+        .path_and_query()
+        .map(|v| v.as_str())
+        .unwrap_or(path);
+
+    let uri = format!("https://mu-api.yuk0.com{}", path_query);
+    println!("{} | {}", path_query, uri);
+
+    *req.uri_mut() = Uri::try_from(uri).unwrap();
+
+    client.request(req).await.unwrap()
 }
 
 // basic handler that responds with a static string
 async fn root() -> &'static str {
+    print!("hello world!");
     "Hello, World!"
 }
 
 async fn get_foo() -> String {
+    println!("get_foo");
     String::from("get:foo")
 }
 async fn post_foo() -> String {
+    println!("get_foo");
     String::from("post:foo")
 }
 async fn foo_bar() -> String {
+    println!("get_foo");
     String::from("foo:bar")
 }
 

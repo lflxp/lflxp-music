@@ -22,7 +22,7 @@ async fn main() {
       tauri::async_runtime::spawn(async move {
         // initialize your app here instead of sleeping :)
         println!("Initializing...");
-        server::lib::init::start();
+        server::lib::init::start().await;
         std::thread::sleep(std::time::Duration::from_secs(5));
         println!("Done initializing.");
 

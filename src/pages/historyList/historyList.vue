@@ -2,7 +2,7 @@
   <!--我听过的（播放历史）-->
   <div class="historyList">
     <music-list
-      :list="list"
+      :list="historyList"
       list-type="duration"
       @select="selectItem"
       @del="deleteItem"
@@ -24,7 +24,7 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import MusicList from 'components/music-list/music-list'
 import MmDialog from 'base/mm-dialog/mm-dialog'
-import { getHistoryList, deltHistoryList } from 'api'
+import { getHistoryList, deltHistoryList } from 'api/local'
 
 export default {
   name: 'HistoryList',

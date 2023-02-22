@@ -58,7 +58,7 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { format } from '@/utils/util'
 import MmNoResult from 'base/mm-no-result/mm-no-result'
-import { download } from 'api'
+import { download } from 'api/local'
 
 const LIST_TYPE_ALBUM = 'album'
 const LIST_TYPE_DURATION = 'duration'

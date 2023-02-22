@@ -117,36 +117,3 @@ export function getComment(id, page, limit = DEFAULT_LIMIT) {
     }
   })
 }
-
-// 获取音乐历史
-export function getHistoryList() {
-  return axios.get('/api/music/history/list')
-}
-
-// 添加音乐历史
-export function addtHistoryList(data) {
-  return axios.post('/api/music/history/add', {
-    param: {
-      data: data
-    }
-  })
-}
-
-// 删除音乐历史
-export function deltHistoryList(id) {
-  return axios.delete('/api/music/history/delete?id=' + id)
-}
-
-// 本地音乐
-export function localList() {
-  return axios.get('/api/music/local/list')
-}
-
-// 远程下载
-export function download(data) {
-  return axios.post('/api/music/local/download', {
-    param: {
-      data: data
-    }
-  })
-}
