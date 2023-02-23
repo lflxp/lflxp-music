@@ -25,6 +25,11 @@ tower-http = { version = "0.3.0", features = ["cors"] }
 hyper = { version = "0.14", features = ["full"] }
 hyper-rustls = "0.23"
 tokio-rustls = "0.23.4"
+rusqlite = { version = "0.27.0", features = ["bundled"] }
+state = { version = "0.5" }
+fast_log = { version="1.5.1", features = ["lz4","zip", "gzip"] }
+getset = "0.1.2"
+thiserror = "1.0"
 
 [features]
 # by default Tauri runs in production mode

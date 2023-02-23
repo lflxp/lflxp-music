@@ -3,9 +3,11 @@
   windows_subsystem = "windows"
 )]
 
+use app::{
+  plugin::db::init_sqlite,
+  pkg::init::start
+};
 use tauri::Manager;
-
-mod server;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -15,6 +17,7 @@ fn greet(name: &str) -> String {
 #[tokio::main]
 async fn main() {
   tauri::Builder::default()
+    .plugin(init_sqlite())
     .setup(|app| {
       // let splashscreen_window = app.get_window("splashscreen").unwrap();
       let main_window = app.get_window("main").unwrap();
@@ -22,7 +25,7 @@ async fn main() {
       tauri::async_runtime::spawn(async move {
         // initialize your app here instead of sleeping :)
         println!("Initializing...");
-        server::lib::init::start();
+        start();
         std::thread::sleep(std::time::Duration::from_secs(5));
         println!("Done initializing.");
 
