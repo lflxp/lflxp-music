@@ -11,12 +11,13 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use rand::Rng;
-use tower_http::cors::CorsLayer;
+use tower_http::cors::{CorsLayer, Any};
 use hyper::{client::HttpConnector, Body};
 
 type Client = hyper::client::Client<HttpConnector, Body>;
 
-pub async fn start() {
+pub fn start() {
+    tokio::spawn(async {
         // initialize tracing
         // tracing_subscriber::fmt::init();
         let client = Client::new();
@@ -30,15 +31,17 @@ pub async fn start() {
         .route("/foo/bar", get(foo_bar))
         .route("/api/music/history/list", get(foo_bar))
         .route("/api/music/local/list", get(foo_bar))
-        .route("/api/music/local/list", get(foo_bar))
         // `POST /users` goes to `create_user`
         .route("/users", post(create_user))
         .with_state(client)
         .layer(
             CorsLayer::new()
-                .allow_origin("*".parse::<HeaderValue>().unwrap())
-                .allow_headers([AUTHORIZATION, ACCESS_CONTROL_ALLOW_ORIGIN, ACCESS_CONTROL_ALLOW_HEADERS])
-                .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::PUT, Method::PATCH])
+                // .allow_origin("*".parse::<HeaderValue>().unwrap())
+                .allow_origin(Any)
+                // .allow_headers([AUTHORIZATION, ACCESS_CONTROL_ALLOW_ORIGIN, ACCESS_CONTROL_ALLOW_HEADERS])
+                .allow_headers(Any)
+                // .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::PUT, Method::PATCH])
+                .allow_methods(Any)
         );
 
         // run our app with hyper
@@ -50,6 +53,8 @@ pub async fn start() {
             .serve(app.into_make_service())
             .await
             .unwrap();
+    });
+        
 }
 
 async fn proxy_handler(State(client): State<Client>, mut req: Request<Body>) -> Response<Body> {
