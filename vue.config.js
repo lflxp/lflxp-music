@@ -52,6 +52,9 @@ module.exports = defineConfig({
       },
       '/static': {
         target: process.env.BACKGROUND_APPLICATION_URL
+      },
+      '/admin': {
+        target: process.env.BACKGROUND_APPLICATION_URL
       }
     }
   },

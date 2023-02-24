@@ -12,7 +12,12 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "shell": {
+        "sidecar": true,
+        "scope": [
+          {"name": "binaries/lflxp-music", "sidecar": true}
+        ]
+      }
     },
     "bundle": {
       "active": true,
@@ -21,7 +26,9 @@
       "deb": {
         "depends": []
       },
-      "externalBin": [],
+      "externalBin": [
+        "binaries/lflxp-music"
+      ],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -29,7 +36,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.tauri.dev.lflxp",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

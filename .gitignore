@@ -26,3 +26,4 @@ dist
 .DS_Store
 tmp/
 lflxp-music
+lflxp-music-aarch64-apple-darwin
