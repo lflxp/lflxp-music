@@ -14,6 +14,7 @@ use std::net::SocketAddr;
 use rand::Rng;
 use tower_http::cors::{CorsLayer, Any};
 use hyper::{client::HttpConnector, Body};
+use serde_json::Value;
 
 type Client = hyper::client::Client<HttpConnector, Body>;
 
@@ -91,6 +92,11 @@ async fn post_foo() -> String {
 async fn foo_bar() -> String {
     println!("get_foo");
     String::from("foo:bar")
+}
+
+async fn json_bar() -> Json<Value> {
+    let json: Value = serde_json::from_str(r#"[{"id":5,"duration":300.01,"album":"","image":"https://p3.music.126.net/YglUhn-RRq6KM7Dfm6VUZw==/109951168255550269.jpg","name":"星辰大海.mp3","url":"/static/admin/星辰大海.mp3","singer":"","user":"admin"}]"#).unwrap();
+    Json(json)
 }
 
 async fn create_user(
