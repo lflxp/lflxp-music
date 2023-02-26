@@ -2,7 +2,7 @@
   <!--我听过的（播放历史）-->
   <div class="historyList">
     <music-list
-      :list="historyList"
+      :list="list"
       list-type="duration"
       @select="selectItem"
       @del="deleteItem"

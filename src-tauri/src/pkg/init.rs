@@ -29,12 +29,13 @@ pub fn start() {
         // `GET /` goes to `root`
         .route("/", get(root))
         .route("/foo", get(get_foo).post(post_foo))
-        .route("/playlist/detail", get(proxy_handler))
+        .route("/playlist/detail", get(json_bar))
         .route("/foo/bar", get(foo_bar))
-        .route("/api/music/history/list", get(foo_bar))
+        .route("/api/music/history/list", get(json_bar))
         .route("/api/music/local/list", get(foo_bar))
         // `POST /users` goes to `create_user`
         .route("/users", post(create_user))
+        .route("/json", get(json_bar))
         .with_state(client)
         .layer(
             CorsLayer::new()
@@ -95,7 +96,7 @@ async fn foo_bar() -> String {
 }
 
 async fn json_bar() -> Json<Value> {
-    let json: Value = serde_json::from_str(r#"[{"id":5,"duration":300.01,"album":"","image":"https://p3.music.126.net/YglUhn-RRq6KM7Dfm6VUZw==/109951168255550269.jpg","name":"星辰大海.mp3","url":"/static/admin/星辰大海.mp3","singer":"","user":"admin"}]"#).unwrap();
+    let json: Value = serde_json::from_str(r#"{"data":[{"id":5,"duration":300.01,"album":"","image":"https://p3.music.126.net/YglUhn-RRq6KM7Dfm6VUZw==/109951168255550269.jpg","name":"星辰大海.mp3","url":"/static/admin/星辰大海.mp3","singer":"","user":"admin"}]}"#).unwrap();
     Json(json)
 }
 
