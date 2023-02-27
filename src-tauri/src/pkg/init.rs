@@ -5,16 +5,18 @@ use axum::{
         StatusCode,
         uri::Uri, Request, Response,
     },
-    extract::State,
+    extract::{State, Query},
     // response::IntoResponse,
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
-use std::net::SocketAddr;
+use std::{net::SocketAddr, collections::HashMap};
 use rand::Rng;
 use tower_http::cors::{CorsLayer, Any};
 use hyper::{client::HttpConnector, Body};
 use serde_json::Value;
+use reqwest::{cookie::Jar, Url};
+use std::sync::Arc;
 
 type Client = hyper::client::Client<HttpConnector, Body>;
 
@@ -29,7 +31,7 @@ pub fn start() {
         // `GET /` goes to `root`
         .route("/", get(root))
         .route("/foo", get(get_foo).post(post_foo))
-        .route("/playlist/detail", get(json_bar))
+        .route("/playlist/detail", get(get_http))
         .route("/foo/bar", get(foo_bar))
         .route("/api/music/history/list", get(json_bar))
         .route("/api/music/local/list", get(foo_bar))
@@ -98,6 +100,19 @@ async fn foo_bar() -> String {
 async fn json_bar() -> Json<Value> {
     let json: Value = serde_json::from_str(r#"{"data":[{"id":5,"duration":300.01,"album":"","image":"https://p3.music.126.net/YglUhn-RRq6KM7Dfm6VUZw==/109951168255550269.jpg","name":"星辰大海.mp3","url":"/static/admin/星辰大海.mp3","singer":"","user":"admin"}]}"#).unwrap();
     Json(json)
+}
+
+async fn get_http(Query(args): Query<HashMap<String, String>>) -> String {
+    let uri = format!("https://mu-api.yuk0.com/playlist/detail?id={}", args.get("id").unwrap());
+    println!("{}", uri);
+
+    let res = reqwest::get(uri).await.unwrap()
+        .text()
+        .await.unwrap();
+    println!("{:#?}",res);
+    format!("{}",res)
+    // let json = serde_json::from_str(&String::from(res)).unwrap();
+    // Ok(Box::leak(res.into_boxed_str()))
 }
 
 async fn create_user(
