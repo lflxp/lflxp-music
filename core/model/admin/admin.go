@@ -153,9 +153,11 @@ type History struct {
 	Id     int64     `xorm:"id pk not null autoincr" name:"id"`
 	Name   string    `xorm:"name" name:"name" verbose_name:"操作历史" list:"true"`
 	Op     string    `xorm:"op" name:"op" verbose_name:"操作"`
+	IP     string    `xorm:"ip" name:"ip" verbose_name:"IP"`
+	Client string    `xorm:"client" name:"client" verbose_name:"客户端"`
 	Common string    `xorm:"common" name:"common" verbose_name:"备注"`
-	Create time.Time `xorm:"created"` //这个Field将在Insert时自动赋值为当前时间
-	Update time.Time `xorm:"updated"` //这个Field将在Insert或Update时自动赋值为当前时间
+	Create time.Time `xorm:"created" name:"create" verbose_name:"创建时间"` //这个Field将在Insert时自动赋值为当前时间
+	Update time.Time `xorm:"updated"`                                   //这个Field将在Insert或Update时自动赋值为当前时间
 }
 
 func getByUUIDHistory(uuid string) (*History, bool, error) {

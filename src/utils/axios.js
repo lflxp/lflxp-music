@@ -1,3 +1,4 @@
+import router from '@/router'
 import axios from 'axios'
 import Vue from 'vue'
 
@@ -16,9 +17,13 @@ request.interceptors.response.use(
   },
   (error) => {
     Vue.prototype.$mmToast(
-      error.response ? error.response.data.message : error.message
+      error.response ? error.response.errorMessage : error.errorCode
     )
-    return error
+    if (error.response.status === 401) {
+      window.location.href = '/login'
+    } else {
+      return error
+    }
   }
 )
 

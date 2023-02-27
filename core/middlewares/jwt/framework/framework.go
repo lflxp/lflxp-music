@@ -301,7 +301,8 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 		Authorizator: jwta,
 		//handles unauthorized logic
 		Unauthorized: func(c *gin.Context, code int, message string) {
-			c.Redirect(http.StatusFound, "/login?url="+c.Request.RequestURI)
+			// c.Redirect(http.StatusFound, "/login?url="+c.Request.RequestURI)
+			httpclient.SendErrorMessage(c, 401, "Invalid credentials", "token is not authorized")
 		},
 		// TokenLookup is a string in the form of "<source>:<name>" that is used
 		// to extract token from the request.
