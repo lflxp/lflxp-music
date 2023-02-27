@@ -28,7 +28,6 @@ func TokenFilter() gin.HandlerFunc {
 		defer admin.AddHistory(&history)
 		if !isWhilteUrl(c) {
 			user, err := js.ParseJWTToken(c)
-			history.Name = fmt.Sprintf("%s:%s:%s", user.Username, user.Name, user.Email)
 			if err != nil {
 				if strings.Contains(err.Error(), "named cookie not present") {
 					// c.Redirect(http.StatusFound, "/login?url="+c.Request.RequestURI)
@@ -48,6 +47,7 @@ func TokenFilter() gin.HandlerFunc {
 				return
 			}
 
+			history.Name = fmt.Sprintf("%s:%s:%s", user.Username, user.Name, user.Email)
 			c.Request.Header.Set("username", user.Username)
 			c.Request.Header.Set("name", user.Name)
 			c.Request.Header.Set("userid", user.UserId)
