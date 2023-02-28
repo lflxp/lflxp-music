@@ -8,8 +8,6 @@ import (
 	"github.com/lflxp/lflxp-music/core/pkg/music"
 	"github.com/lflxp/lflxp-music/core/pkg/proxy"
 
-	"github.com/lflxp/lflxp-music/core/asset"
-
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	log "github.com/go-eden/slf4go"
@@ -49,7 +47,7 @@ func PreGinServe(r *gin.Engine) {
 
 	pages.RegisterTemplate(r)
 	controller.RegisterAdmin(r)
-	asset.RegisterAsset(r)
+	// asset.RegisterAsset(r)
 	proxy.ProxyRegister(r)
 	music.RegisterMusic(r)
 }
