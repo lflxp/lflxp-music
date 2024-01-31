@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 	"sync"
@@ -19,7 +20,6 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	log "github.com/go-eden/slf4go"
 	"github.com/lflxp/tools/orm/sqlite"
 	"github.com/spf13/viper"
 )
@@ -32,7 +32,7 @@ var (
 
 func init() {
 	identityKey = viper.GetString("token.jwtIdentityKey")
-	// log.Debugf("初始化jwtIdentityKey %s", identityKey)
+	// slog.Debugf("初始化jwtIdentityKey %s", identityKey)
 }
 
 func GetMiddleware() *jwt.GinJWTMiddleware {
@@ -49,12 +49,12 @@ func VerifyAuth(username, password string) (bool, error) {
 	// 忽略[]claims与string 解析
 	has, err := sqlite.NewOrm().Where("username=?", username).Get(user)
 	if err != nil {
-		log.Error(err)
+		slog.Error(err.Error())
 		return false, err
 	}
 
 	if has {
-		log.Debugf("Found User %s Login", username)
+		slog.Debug(fmt.Sprintf("Found User %s Login", username))
 		if user.Password == password {
 			return true, nil
 		} else {
@@ -96,7 +96,7 @@ func VerifyKubeVelaLogin(username, password string) (*model.KubeVelaToken, error
 	var result model.KubeVelaToken
 	host := viper.GetString("auth.url")
 	url := fmt.Sprintf("%s/api/v1/auth/login", host)
-	log.Debug("kubevela login url: %s", url)
+	slog.Debug("kubevela login url: %s", url)
 	code := 0
 	body := ""
 	err := httpclient.NewGoutClient().
@@ -117,7 +117,7 @@ func VerifyKubeVelaLogin(username, password string) (*model.KubeVelaToken, error
 	}
 
 	if code != 200 {
-		log.Error(body)
+		slog.Error(body)
 		return &result, errors.New(body)
 	}
 
@@ -131,9 +131,9 @@ func VerifyKubeVelaLogin(username, password string) (*model.KubeVelaToken, error
 
 func VerifyAuthByRancher(username, password string) (string, string, bool) {
 	rancherHost := viper.GetString("proxy.host")
-	log.Infof("初始化RancherHost地址 %s", rancherHost)
+	slog.Info(fmt.Sprintf("初始化RancherHost地址 %s", rancherHost))
 	url := fmt.Sprintf("%s/v3-public/localProviders/local?action=login", rancherHost)
-	log.Debugf("url is %s", url)
+	slog.Debug(fmt.Sprintf("url is %s", url))
 	code := 0
 	body := ""
 	header := make(http.Header)
@@ -156,22 +156,22 @@ func VerifyAuthByRancher(username, password string) (string, string, bool) {
 		Do()
 
 	if err != nil {
-		log.Error(err.Error())
+		slog.Error(err.Error())
 		return "", "", false
 	}
 
 	if code != 200 {
-		log.Error(body)
+		slog.Error(body)
 		return "", "", false
 	}
 
 	ress := header.Get("Set-Cookie")
 	if ress == "" {
-		log.Error("no token found")
+		slog.Error("no token found")
 		return "", "", false
 	}
 
-	log.Debugf("Ress is %s", ress)
+	slog.Debug(fmt.Sprintf("Ress is %s", ress))
 	var rs string
 	for _, t := range strings.Split(ress, ";") {
 		if strings.Contains(t, "R_SESS") {
@@ -180,7 +180,7 @@ func VerifyAuthByRancher(username, password string) (string, string, bool) {
 		}
 	}
 	if rs == "" {
-		log.Error("no R_SESS found")
+		slog.Error("no R_SESS found")
 		return "", "", false
 	}
 	return rs, ress, true
@@ -216,7 +216,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 			if v, ok := data.(*model.User); ok {
 				// claimJson, err := GetUserClaims(v.Username)
 				// if err != nil {
-				// 	log.Error(err.Error())
+				// 	slog.Error(err.Error())
 				// 	return jwt.MapClaims{}
 				// }
 				// maps the claims in the JWT
@@ -253,7 +253,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			log.Debugf("I Claims: %v", claims)
+			slog.Debug(fmt.Sprintf("claims %v", claims))
 			return nil
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -266,7 +266,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 
 			c.Request.Header.Set("user", loginVals.Username)
 
-			log.Debugf("JWT Authenticator %v username %s password %s", loginVals, userID, password)
+			slog.Debug(fmt.Sprintf("JWT Authenticator %v username %s password %s", loginVals, userID, password))
 			if IsRancherLogin {
 				if token, ress, ok := VerifyAuthByRancher(userID, password); ok {
 					c.Header("Set-Cookie", strings.Replace(ress, "Secure", "", -1))
@@ -281,7 +281,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 					if token, err := VerifyKubeVelaLogin(userID, password); err == nil {
 						return token, nil
 					} else {
-						log.Error(err.Error())
+						slog.Error(err.Error())
 					}
 				} else {
 					if ok, err := VerifyAuth(userID, password); ok {
@@ -290,7 +290,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 							Token:    "verifyAuth",
 						}, nil
 					} else {
-						log.Error(err.Error())
+						slog.Error(err.Error())
 					}
 				}
 			}
@@ -342,7 +342,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 		},
 	})
 	if err != nil {
-		log.Fatal("JWT Error:" + err.Error())
+		slog.Error("JWT Error:" + err.Error())
 	}
 	return authMiddleware
 }

@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/bogem/id3v2/v2"
-	log "github.com/go-eden/slf4go"
 	"github.com/lflxp/lflxp-music/core/middlewares/template"
 	"github.com/lflxp/tools/orm/sqlite"
 	"k8s.io/client-go/util/homedir"
@@ -45,25 +45,25 @@ func (m *Musichistory) Download() (error, bool) {
 
 	res, err := http.Get(m.Url)
 	if err != nil {
-		log.Error(err)
+		slog.Error(err.Error())
 		return err, false
 	}
 
 	f, err := os.Create(path)
 	if err != nil {
-		log.Error(err)
+		slog.Error(err.Error())
 		return err, false
 	}
 
 	_, err = io.Copy(f, res.Body)
 	if err != nil {
-		log.Error(err)
+		slog.Error(err.Error())
 		return err, false
 	} else {
 		// 写入信息
 		tag, err := id3v2.Open(path, id3v2.Options{Parse: true})
 		if err != nil {
-			log.Fatal("Error while opening mp3 file: ", err)
+			slog.Error("Error while opening mp3 file", "error", err.Error())
 		}
 		defer tag.Close()
 		tag.SetTitle(m.Name)
