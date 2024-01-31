@@ -5,9 +5,9 @@ package cmd
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
-	log "github.com/go-eden/slf4go"
 	"github.com/lflxp/lflxp-music/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -16,6 +16,7 @@ import (
 var (
 	isHttps bool
 	cfgFile string
+	lvl     slog.LevelVar
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -87,18 +88,13 @@ func initConfig() {
 }
 
 func initLog() {
-	level := viper.GetString("log.level")
-	if level == "debug" {
-		log.SetLevel(log.DebugLevel)
-	} else if level == "trace" {
-		log.SetLevel(log.TraceLevel)
-	} else if level == "info" {
-		log.SetLevel(log.InfoLevel)
-	} else if level == "warn" {
-		log.SetLevel(log.WarnLevel)
-	} else if level == "error" {
-		log.SetLevel(log.ErrorLevel)
-	} else if level == "panic" {
-		log.SetLevel(log.PanicLevel)
+	// 日志配置
+	lvl.Set(slog.LevelError)
+	opts := slog.HandlerOptions{
+		AddSource: true,
+		Level:     &lvl,
 	}
+
+	// slog.SetDefault(slog.New((slog.NewJSONHandler(os.Stdout, &opts))))
+	slog.SetDefault(slog.New((slog.NewTextHandler(os.Stdout, &opts))))
 }

@@ -1,15 +1,14 @@
 module github.com/lflxp/lflxp-music
 
-go 1.19
+go 1.21.6
 
 require (
 	github.com/appleboy/gin-jwt/v2 v2.9.1
 	github.com/bogem/id3v2/v2 v2.1.4
 	github.com/gin-contrib/gzip v0.0.6
 	github.com/gin-gonic/gin v1.8.2
-	github.com/go-eden/slf4go v1.1.2
 	github.com/guonaihong/gout v0.3.6
-	github.com/lflxp/tools v0.0.8
+	github.com/lflxp/tools v0.0.11
 	github.com/prometheus/client_golang v1.14.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/cobra v1.6.1
@@ -31,8 +30,6 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-eden/common v0.1.14 // indirect
-	github.com/go-eden/routine v1.0.2 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect

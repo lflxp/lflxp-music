@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"regexp"
 	"strings"
@@ -10,7 +11,6 @@ import (
 	"github.com/lflxp/lflxp-music/core/model/admin"
 
 	"github.com/gin-gonic/gin"
-	log "github.com/go-eden/slf4go"
 	"github.com/lflxp/tools/httpclient"
 )
 
@@ -91,6 +91,6 @@ func isWhilteUrl(c *gin.Context) bool {
 		}
 	}
 
-	log.Debugf("method [%s] isWhite %v path %s Url.Path %s ", c.Request.Method, rs, c.Request.RequestURI, c.Request.URL.Path)
+	slog.Debug(fmt.Sprintf("method [%s] isWhite %v path %s Url.Path %s ", c.Request.Method, rs, c.Request.RequestURI, c.Request.URL.Path))
 	return rs
 }
