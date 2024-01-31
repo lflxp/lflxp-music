@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	js "github.com/lflxp/lflxp-music/core/middlewares/jwt/services"
-	"github.com/lflxp/lflxp-music/core/model/admin"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lflxp/tools/httpclient"
@@ -19,13 +18,13 @@ func TokenFilter() gin.HandlerFunc {
 		// token := jwt.ExtractClaims(c)
 		// log.Debug("ExtractClaims token ", token)
 
-		history := admin.History{
-			IP:     c.Request.RemoteAddr,
-			Op:     c.Request.Method,
-			Common: c.Request.RequestURI,
-			Client: c.Request.UserAgent(),
-		}
-		defer admin.AddHistory(&history)
+		// history := admin.History{
+		// 	IP:     c.Request.RemoteAddr,
+		// 	Op:     c.Request.Method,
+		// 	Common: c.Request.RequestURI,
+		// 	Client: c.Request.UserAgent(),
+		// }
+		// defer admin.AddHistory(&history)
 		if !isWhilteUrl(c) {
 			user, err := js.ParseJWTToken(c)
 			if err != nil {
@@ -47,15 +46,15 @@ func TokenFilter() gin.HandlerFunc {
 				return
 			}
 
-			history.Name = fmt.Sprintf("%s:%s:%s", user.Username, user.Name, user.Email)
+			// history.Name = fmt.Sprintf("%s:%s:%s", user.Username, user.Name, user.Email)
 			c.Request.Header.Set("username", user.Username)
-			c.Request.Header.Set("name", user.Name)
-			c.Request.Header.Set("userid", user.UserId)
-			c.Request.Header.Set("email", user.Email)
+			// c.Request.Header.Set("name", user.Name)
+			// c.Request.Header.Set("userid", user.UserId)
+			// c.Request.Header.Set("email", user.Email)
 			c.Request.Header.Set("token", user.Token)
-			c.Request.Header.Set("refreshtoken", user.RefreshToken)
+			// c.Request.Header.Set("refreshtoken", user.RefreshToken)
 		} else {
-			history.Name = "unknown"
+			// history.Name = "unknown"
 			c.Next()
 		}
 	}

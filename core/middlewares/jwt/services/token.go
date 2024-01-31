@@ -15,15 +15,15 @@ import (
 )
 
 // 获取用户详细信息
-func ParseToken(info string, sc *corev1.Secret) (*model.User, error) {
+func ParseToken(info string, sc *corev1.Secret) (*model.MusicUser, error) {
 	// TODO: 填补用户信息
-	jwtUser := &model.User{}
+	jwtUser := &model.MusicUser{}
 
 	return jwtUser, nil
 }
 
 // 解析JWT Token
-func ParseJWTToken(c *gin.Context) (*model.User, error) {
+func ParseJWTToken(c *gin.Context) (*model.MusicUser, error) {
 	jwtoken, err := c.Cookie("token")
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func ParseJWTToken(c *gin.Context) (*model.User, error) {
 		return nil, err
 	}
 
-	var user *model.User
+	var user *model.MusicUser
 	err = json.Unmarshal(payload, &user)
 	if err != nil {
 		return nil, err

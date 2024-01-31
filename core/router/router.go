@@ -20,7 +20,7 @@ import (
 func PreGinServe(r *gin.Engine) {
 	slog.Info("注册Gin路由")
 
-	r.Use(middlewares.TokenFilter())
+	// r.Use(middlewares.TokenFilter())
 	r.Use(gin.Logger())
 
 	r.Use(middlewares.Cors())

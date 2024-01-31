@@ -45,7 +45,7 @@ func GetMiddleware() *jwt.GinJWTMiddleware {
 // 验证用户密码
 func VerifyAuth(username, password string) (bool, error) {
 	// 优先查询数据库
-	var user = new(model.User)
+	var user = new(model.MusicUser)
 	// 忽略[]claims与string 解析
 	has, err := sqlite.NewOrm().Where("username=?", username).Get(user)
 	if err != nil {
@@ -213,7 +213,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 		MaxRefresh:  10 * time.Hour,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*model.User); ok {
+			if v, ok := data.(*model.MusicUser); ok {
 				// claimJson, err := GetUserClaims(v.Username)
 				// if err != nil {
 				// 	slog.Error(err.Error())
@@ -221,16 +221,16 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 				// }
 				// maps the claims in the JWT
 				return jwt.MapClaims{
-					"username":     v.Username,
-					"token":        v.Token,
-					"email":        v.Email,
-					"tenant":       v.Tenant,
-					"authProvider": v.AuthProvider,
-					"userId":       v.UserId,
-					"role":         v.Role,
-					"roleLevel":    v.RoleLevel,
-					"roleReal":     v.RoleReal,
-					"isGlobal":     v.IsGlobal,
+					"username": v.Username,
+					"token":    v.Token,
+					// "email":        v.Email,
+					// "tenant":       v.Tenant,
+					// "authProvider": v.AuthProvider,
+					// "userId":       v.UserId,
+					// "role":         v.Role,
+					// "roleLevel":    v.RoleLevel,
+					// "roleReal":     v.RoleReal,
+					// "isGlobal":     v.IsGlobal,
 				}
 			} else if vv, ok := data.(map[string]string); ok {
 				tmp := jwt.MapClaims{}
@@ -257,7 +257,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 			return nil
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var loginVals model.User
+			var loginVals model.MusicUser
 			if err := c.ShouldBind(&loginVals); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
@@ -270,7 +270,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 			if IsRancherLogin {
 				if token, ress, ok := VerifyAuthByRancher(userID, password); ok {
 					c.Header("Set-Cookie", strings.Replace(ress, "Secure", "", -1))
-					return &model.User{
+					return &model.MusicUser{
 						Username: userID,
 						Token:    token,
 					}, nil
@@ -285,7 +285,7 @@ func NewGinJwtMiddlewares(jwta JwtAuthorizator) *jwt.GinJWTMiddleware {
 					}
 				} else {
 					if ok, err := VerifyAuth(userID, password); ok {
-						return &model.User{
+						return &model.MusicUser{
 							Username: userID,
 							Token:    "verifyAuth",
 						}, nil
